@@ -110,7 +110,7 @@ class Graph:
             this_attachment = FileAttachment(
                 odata_type = attach.odata_type,
                 name = attach.name,
-                content_bytes = attach.content_bytes,
+                content_bytes = base64.urlsafe_b64decode(attach.content_bytes),
                 )
             #append all attachments
             attachment_response = await self.app_client.users.by_user_id(user_id_target).messages.by_message_id(message_id_target).attachments.post(this_attachment)
@@ -156,7 +156,8 @@ class Graph:
                     all_user_messages.append(s_msg_page)
             
             #Messages creation
-            for msg_to_copy in all_user_messages:
+            for msg_to_copy in all_user_messages[:1]:
+                
                 
                 if msg_to_copy.has_attachments:
                     msg_with_attch = MessageAttachment(msg_to_copy.internet_message_id, msg_to_copy.id ,msg_to_copy.has_attachments)
