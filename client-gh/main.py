@@ -109,8 +109,9 @@ async def copy_mail_messages(graph_client: Graph, user_source, user_target):
     
     if source_messages:
         for msg in source_messages:
-            print('MessageID: ',msg.id)
+            print('InternetMessageID: ',msg.internet_message_id)
             print('MessageSubject: ',msg.subject)
+            print('Attachments: ',msg.has_attachments)
             print('###############################MESSAGECOPIED')
 
         
