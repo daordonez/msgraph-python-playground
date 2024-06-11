@@ -156,7 +156,7 @@ class Graph:
                     all_user_messages.append(s_msg_page)
             
             #Messages creation
-            for msg_to_copy in all_user_messages[:1]:
+            for msg_to_copy in all_user_messages:
                 
                 
                 if msg_to_copy.has_attachments:
