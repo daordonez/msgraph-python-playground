@@ -1,5 +1,6 @@
 from configparser import SectionProxy
 from datetime import datetime
+import pytz
 import base64
 from msgraph import GraphServiceClient # type: ignore
 from azure.identity.aio import ClientSecretCredential # type: ignore
@@ -158,6 +159,8 @@ class Graph:
             #Messages creation
             for msg_to_copy in all_user_messages:
                 
+                #Received date time
+                received_time_iso = msg_to_copy.received_date_time
                 
                 if msg_to_copy.has_attachments:
                     msg_with_attch = MessageAttachment(msg_to_copy.internet_message_id, msg_to_copy.id ,msg_to_copy.has_attachments)
@@ -165,32 +168,47 @@ class Graph:
                                
                 request_body = Message(
                     id = msg_to_copy.id,
-                    subject = msg_to_copy.subject,
-                    from_=msg_to_copy.from_,
-                    sender = msg_to_copy.sender,
-                    reply_to = msg_to_copy.reply_to,
-                    to_recipients = msg_to_copy.to_recipients,
+                    categories=msg_to_copy.categories,
+                    change_key=msg_to_copy.change_key,
                     created_date_time = msg_to_copy.created_date_time,
                     last_modified_date_time = msg_to_copy.last_modified_date_time,
-                    has_attachments = msg_to_copy.has_attachments,
                     attachments = msg_to_copy.attachments,
-                    cc_recipients = msg_to_copy.cc_recipients,
                     bcc_recipients = msg_to_copy.bcc_recipients,
                     body = msg_to_copy.body,
-                    conversation_id=msg_to_copy.conversation_id,
+                    extensions=msg_to_copy.extensions,
+                    flag=msg_to_copy.flag,
                     importance = msg_to_copy.importance,
-                    is_draft = msg_to_copy.is_draft,
-                    is_read = msg_to_copy.is_read,
-                    parent_folder_id = this_parent_folder.parent_folder_id,
-                    received_date_time = msg_to_copy.received_date_time,
+                    inference_classification=msg_to_copy.inference_classification,
                     internet_message_headers = msg_to_copy.internet_message_headers,
                     internet_message_id = msg_to_copy.internet_message_id,
+                    is_delivery_receipt_requested=msg_to_copy.is_delivery_receipt_requested,
+                    is_draft = msg_to_copy.is_draft,
+                    is_read = msg_to_copy.is_read,
+                    multi_value_extended_properties=msg_to_copy.multi_value_extended_properties,
+                    parent_folder_id = this_parent_folder.parent_folder_id,
+                    #received_date_time = msg_to_copy.received_date_time,
+                    reply_to = msg_to_copy.reply_to,
+                    sender = msg_to_copy.sender,
+                    subject = msg_to_copy.subject,
+                    from_=msg_to_copy.from_,
+                    to_recipients = msg_to_copy.to_recipients,
+                    has_attachments = msg_to_copy.has_attachments,
+                    cc_recipients = msg_to_copy.cc_recipients,
+                    conversation_id=msg_to_copy.conversation_id,
                     web_link = msg_to_copy.web_link,
                     #Avoids create message as a draft
                     single_value_extended_properties = [
                         SingleValueLegacyExtendedProperty(
                             id = "Integer 0x0E07",
                             value = "4",
+                        ),
+                        SingleValueLegacyExtendedProperty(
+                            id = "SystemTime 0x0039",
+                            value = (received_time_iso).isoformat(),
+                        ),
+                        SingleValueLegacyExtendedProperty(
+                            id = "SystemTime 0x0E06",
+                            value = (received_time_iso).isoformat(),
                         ),
                     ],
                 )    
@@ -209,7 +227,11 @@ class Graph:
                 #attach files
                 response_attach = await self.attach_message_files(user_id_source, user_id_target, id_to_extract_source, id_to_attach_target)
                     
-                print(response_attach)
+                for attch in response_attach:
+                    print('AttachmentName: ', attch.name)
+                    print('AttachmentSize: ', attch.size)
+                    print('AttachmentType: ', attch.content_type)
+                    print('******************ATTACHMENT')
                 
             
         return responses

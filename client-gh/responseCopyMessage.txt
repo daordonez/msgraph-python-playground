@@ -4,7 +4,8 @@ Message(
     odata_type='#microsoft.graph.message', 
     categories=[], 
     change_key='CQAAABYAAACozz16uF3zSbtVB9dSt4+JAAAkrxSk', 
-    created_date_time=DateTime(2024, 6, 10, 8, 39, 46, tzinfo=Timezone('UTC')), last_modified_date_time=DateTime(2024, 6, 10, 8, 39, 46, tzinfo=Timezone('UTC')), 
+    created_date_time=DateTime(2024, 6, 10, 8, 39, 46, tzinfo=Timezone('UTC')), 
+    last_modified_date_time=DateTime(2024, 6, 10, 8, 39, 46, tzinfo=Timezone('UTC')), 
     attachments=None, 
     bcc_recipients=[], 
     body=ItemBody(
